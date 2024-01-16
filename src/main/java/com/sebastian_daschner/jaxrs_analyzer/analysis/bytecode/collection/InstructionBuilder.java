@@ -1,6 +1,7 @@
 package com.sebastian_daschner.jaxrs_analyzer.analysis.bytecode.collection;
 
 import com.sebastian_daschner.jaxrs_analyzer.LogProvider;
+import com.sebastian_daschner.jaxrs_analyzer.analysis.classes.ContextClassReader;
 import com.sebastian_daschner.jaxrs_analyzer.model.JavaUtils;
 import com.sebastian_daschner.jaxrs_analyzer.model.instructions.*;
 import com.sebastian_daschner.jaxrs_analyzer.model.methods.MethodIdentifier;
@@ -289,18 +290,38 @@ public final class InstructionBuilder {
     }
 
     private static Object getStaticValue(String name, String containingClass) {
-        final Field field;
         try {
-            // needs to load same class instance in Maven plugin, not from extended classloader
-            final Class<?> clazz = Class.forName(containingClass.replace('/', '.'));
-            field = clazz.getDeclaredField(name);
-            field.setAccessible(true);
-            return field.get(null);
-        } catch (Exception e) {
+            final Class<?> clazz = getClassForObtainStaticValue(containingClass);
+
+            if(clazz != null) {
+                final Field field = clazz.getDeclaredField(name);
+                field.setAccessible(true);
+                return field.get(null);
+            }
+
+            return null;
+        }  catch (Exception e) {
             LogProvider.error("Could not access static property, reason: " + e.getMessage());
             LogProvider.debug(e);
             return null;
         }
     }
 
+    private static Class<?> getClassForObtainStaticValue(String containingClass) {
+        String className = containingClass.replace('/', '.');
+
+        try {
+            // needs to load same class instance in Maven plugin, not from extended classloader
+            return Class.forName(className);
+        } catch (Exception e) {
+            //Otherwise tries to find the class in the extended classloader
+            try {
+                return ContextClassReader.getClassLoader().loadClass(className);
+            } catch (Exception ex) {
+                LogProvider.error("Could not obtain class to access static property, reason: " + e.getMessage());
+                LogProvider.debug(e);
+                return null;
+            }
+        }
+    }
 }
