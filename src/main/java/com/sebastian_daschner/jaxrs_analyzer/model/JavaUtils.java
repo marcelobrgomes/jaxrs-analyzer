@@ -409,17 +409,21 @@ public final class JavaUtils {
 
     public static String getMethodSignature(final Method method) {
         try {
-            final Field signatureField = method.getClass().getDeclaredField("signature");
-            signatureField.setAccessible(true);
-            final String signature = (String) signatureField.get(method);
+            if(Stream.of(method.getClass().getDeclaredFields()).anyMatch(f -> "signature".equals(f.getName()))) {
+                final Field signatureField = method.getClass().getDeclaredField("signature");
+                signatureField.setAccessible(true);
+                final String signature = (String) signatureField.get(method);
 
-            if (signature != null)
-                return signature;
+                if (signature != null) {
+                    return signature;
+                }
+            }
+
             return Type.getMethodDescriptor(method);
         } catch (ReflectiveOperationException e) {
-            LogProvider.error("Could not access method " + method);
-            LogProvider.debug(e);
-            return null;
+                LogProvider.error("Could not access method " + method);
+                LogProvider.debug(e);
+                return null;
         }
     }
 
