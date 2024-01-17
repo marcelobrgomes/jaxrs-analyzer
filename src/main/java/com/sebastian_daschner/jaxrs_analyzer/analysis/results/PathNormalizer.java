@@ -20,7 +20,11 @@ import com.sebastian_daschner.jaxrs_analyzer.model.results.ClassResult;
 import com.sebastian_daschner.jaxrs_analyzer.model.results.MethodResult;
 import com.sebastian_daschner.jaxrs_analyzer.utils.StringUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +45,7 @@ final class PathNormalizer {
      */
     static String getApplicationPath(final Set<ClassResult> classResults) {
         return classResults.stream().map(ClassResult::getApplicationPath).filter(Objects::nonNull)
-                .map(PathNormalizer::normalize).findAny().orElse("");
+                .map(path -> PathNormalizer.normalize(path, false)).findAny().orElse("");
     }
 
     /**
@@ -54,7 +58,7 @@ final class PathNormalizer {
     static String getPath(final MethodResult methodResult) {
         final List<String> paths = determinePaths(methodResult);
 
-        return paths.stream().map(PathNormalizer::normalize).collect(Collectors.joining("/"));
+        return paths.stream().map(path -> PathNormalizer.normalize(path, true)).collect(Collectors.joining("/"));
     }
 
     /**
@@ -100,9 +104,10 @@ final class PathNormalizer {
      * Normalizes the given path, i.e. trims leading or trailing forward-slashes and removes path parameter matchers.
      *
      * @param path The path to normalize
+     * @param allowColons allow colons in the path (i.e. RESTConf)
      * @return The normalized path
      */
-    private static String normalize(final String path) {
+    private static String normalize(final String path, final boolean allowColons) {
         final StringBuilder builder = new StringBuilder(path);
 
         int index = 0;
@@ -118,14 +123,14 @@ final class PathNormalizer {
                 case '}':
                     if (last == '\\')
                         break;
-                    if (colonIndex != -1) {
+                    if (!allowColons && colonIndex != -1) {
                         builder.delete(colonIndex, index);
                         index = colonIndex;
                         colonIndex = -1;
                     }
                     break;
                 case ':':
-                    if (colonIndex == -1) {
+                    if (!allowColons && colonIndex == -1) {
                         colonIndex = index;
                     }
                     break;
