@@ -51,7 +51,7 @@ public class JAXRSAnalyzer {
             return;
         }
 
-        final Project project = new Project(analysis.projectName, analysis.projectVersion, resources);
+        final Project project = new Project(analysis.projectName, analysis.projectVersion, resources, analysis.basePath);
         final byte[] output = analysis.backend.render(project);
 
         if (analysis.outputLocation != null) {
@@ -99,6 +99,7 @@ public class JAXRSAnalyzer {
         private String projectVersion;
         private Path outputLocation;
         private Backend backend;
+        private String basePath;
 
         public Set<Path> getProjectClassPaths() {
             return projectClassPaths;
@@ -143,6 +144,10 @@ public class JAXRSAnalyzer {
 
         public Backend getBackend() {
             return backend;
+        }
+
+        public void setBasePath(String basePath) {
+            this.basePath = basePath;
         }
     }
 

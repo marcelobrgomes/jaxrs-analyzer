@@ -12,13 +12,19 @@ public class Project {
     private final String name;
     private final String version;
     private final Resources resources;
+    private final String basePath;
 
     public Project(final String name, final String version, final Resources resources) {
+        this(name, version, resources, null);
+    }
+
+    public Project(final String name, final String version, final Resources resources, final String basePath) {
         StringUtils.requireNonBlank(name);
         StringUtils.requireNonBlank(version);
         this.name = name;
         this.version = version;
         this.resources = resources;
+        this.basePath = basePath;
     }
 
     public String getName() {
@@ -33,4 +39,7 @@ public class Project {
         return resources;
     }
 
+    public String getBasePath() {
+        return basePath;
+    }
 }

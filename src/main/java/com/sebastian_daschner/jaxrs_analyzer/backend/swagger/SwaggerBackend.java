@@ -56,6 +56,7 @@ public class SwaggerBackend implements Backend {
     private SchemaBuilder schemaBuilder;
     private String projectName;
     private String projectVersion;
+    private String basePath;
 
     @Override
     public void configure(final Map<String, String> config) {
@@ -71,6 +72,7 @@ public class SwaggerBackend implements Backend {
             resources = project.getResources();
             projectName = project.getName();
             projectVersion = project.getVersion();
+            basePath = project.getBasePath();
             schemaBuilder = new SchemaBuilder(resources.getTypeRepresentations());
 
             final JsonObject output = modifyJson(renderInternal());
@@ -101,9 +103,12 @@ public class SwaggerBackend implements Backend {
     }
 
     private void renderHeader() {
-        builder.add("swagger", SWAGGER_VERSION).add("info", Json.createObjectBuilder()
-                .add("version", projectVersion).add("title", projectName))
-                .add("host", options.getDomain() == null ? "" : options.getDomain()).add("basePath", (options.getDomain() != null && !"".equals(options.getDomain().trim()) ? '/' : '/' + projectName + '/') + resources.getBasePath())
+        builder.add("swagger", SWAGGER_VERSION)
+                .add("info", Json.createObjectBuilder()
+                                    .add("version", projectVersion)
+                                    .add("title", projectName))
+                .add("host", options.getDomain() == null ? "" : options.getDomain())
+                .add("basePath", (options.getDomain() != null && !"".equals(options.getDomain().trim()) ? '/' : '/' + projectName + '/') + (this.basePath != null ? this.basePath : resources.getBasePath()))
                 .add("schemes", options.getSchemes().stream().map(Enum::name).map(String::toLowerCase).sorted()
                         .collect(Json::createArrayBuilder, JsonArrayBuilder::add, JsonArrayBuilder::add).build());
     }

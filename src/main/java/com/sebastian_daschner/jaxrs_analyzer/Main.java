@@ -126,6 +126,9 @@ public class Main {
                         case "-o":
                             analysis.setOutputLocation(Paths.get(args[++i]));
                             break;
+                        case "-bp":
+                            analysis.setBasePath(args[++i]);
+                            break;
                         case "-e":
                             System.setProperty("project.build.sourceEncoding", args[++i]);
                             break;

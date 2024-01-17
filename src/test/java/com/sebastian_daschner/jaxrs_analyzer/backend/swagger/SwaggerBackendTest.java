@@ -57,7 +57,7 @@ public class SwaggerBackendTest {
 
     @Test
     public void test() {
-        final Project project = new Project("project name", "1.0", resources);
+        final Project project = new Project("project name", "1.0", resources, "basePath");
         cut.configure(singletonMap(INLINE_PRETTIFY, "false"));
         final String actualOutput = new String(cut.render(project));
 
