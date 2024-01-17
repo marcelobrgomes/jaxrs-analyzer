@@ -19,8 +19,8 @@ package com.sebastian_daschner.jaxrs_analyzer.analysis.results.testclasses.typea
 import com.sebastian_daschner.jaxrs_analyzer.analysis.results.TypeUtils;
 import com.sebastian_daschner.jaxrs_analyzer.model.rest.TypeIdentifier;
 import com.sebastian_daschner.jaxrs_analyzer.model.rest.TypeRepresentation;
+import jakarta.xml.bind.annotation.XmlTransient;
 
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.Collections;
 import java.util.Set;
 

@@ -20,8 +20,8 @@ import com.sebastian_daschner.jaxrs_analyzer.analysis.results.TypeUtils;
 import com.sebastian_daschner.jaxrs_analyzer.model.Types;
 import com.sebastian_daschner.jaxrs_analyzer.model.rest.TypeIdentifier;
 import com.sebastian_daschner.jaxrs_analyzer.model.rest.TypeRepresentation;
+import jakarta.xml.bind.annotation.XmlElement;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
